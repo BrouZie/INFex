@@ -1,0 +1,40 @@
+En liten oversikt over hvordan vi jobber med git:
+
+Før du lager ny forandring:
+- git pull (for å få nyeste oppdatering)
+
+Deretter:
+- git switch -c <branchname> (-c betyr at du lager en branch dersom det ikke finnes fra før av)
+
+(hei Georg, git switch gjør det samme som checkout egentlig, så bruk hva enn du vil)
+
+
+Nå kan du:
+- Lage forandringer, men husk å regelmessig:
+	- git add .
+	- git commit -m "<melding om forandringen>" (du kan bruke vscode for både add og commit)
+
+Når du er klar for a legge til forandringen din (til GitHub):
+- git push origin <branchname> (du må være på "feature branch", altså IKKE main branch)
+- Deretter åpner du en "pull request" inne på GitHub for å "merge" forandringen inn i main branch
+- Spør gruppe om kode "lookin fresh"
+- Trykk på "Merge" knapp på GitHub slik at dine forandringer ligger på main
+- (vi kan velge å slette branch inne på GitHub, usikker på hva vi vil)
+
+Nå er du ferdig:
+- git switch main (dette tar deg tilbake til main)
+- Du kan velge å fjerne du lokale branch ved å:
+	- git branch -D <branchname>
+
+----- REPEAT -----
+
+
+Nyttige commandoer:
+
+- git branch (se alle branches)
+- git status
+
+Dersom du jobber med noe og ønsker oppdateringer fra main:
+1. gå til main og pull
+2. gå tilbake til feature branch
+3. git rebase main
