@@ -83,10 +83,101 @@ class Box:
                 self.molecules[i].increment_U(half_nrg)
                 self.molecules[j].increment_U(half_nrg)
 
-        for idx, mol in enumerate(self.molecules[:5]):
-            print(f"Mol {idx} U = {mol.get_U()}")
-
         return total_nrg
+
+    """
+    This uses f_mag = - derivative of pair_nrg
+    fx = f_mag * image_dx * 1/pair_nrg 
+
+    """
+
+    def compute_forces_F(self):
+        # Reset before computation
+        for mol in self.molecules:
+            mol.reset_forces()
+
+        for i in range(len(self.molecules) - 1):
+            pos_i = self.molecules[i].get_position()
+            for j in range(i + 1, len(self.molecules)):
+                pos_j = self.molecules[j].get_position()
+
+                dx = pos_j[0] - pos_i[0]
+                dy = pos_j[1] - pos_i[1]
+                dz = pos_j[2] - pos_i[2]
+                dx -= Lx * round(dx / Lx)
+                dy -= Ly * round(dy / Ly)
+                dz -= Lz * round(dz / Lz)
+
+                r = (dx**2 + dy**2 + dz**2) ** 0.5
+
+                u_rcap = 2.5
+                if r >= u_rcap:
+                    continue
+
+                duLJ_dr = 24.0 * r ** (-7) - 48.0 * r ** (-13)
+
+                f_magnitude = -duLJ_dr
+
+                inv_r = 1.0 / r
+                fx = f_magnitude * dx * inv_r
+                fy = f_magnitude * dy * inv_r
+                fz = f_magnitude * dz * inv_r
+
+                self.molecules[i].increment_F(fx, fy, fz)
+                self.molecules[j].increment_F(-fx, -fy, -fz)
+
+    def integrate(self, dt):
+        """
+        Perform one Velocity‐Verlet step of size dt:
+        (1) Half‐step velocity: v(t+dt/2) = v(t) + (dt/2) * [F(t)/m]
+        (2) Full‐step position:  x(t+dt) = x(t) + v(t+dt/2)*dt  (with PBC wrap)
+        (3) Recompute forces at new positions → F(t+dt)
+        (4) Complete velocity:  v(t+dt) = v(t+dt/2) + (dt/2) * [F(t+dt)/m]
+        """
+
+        # 1) HALF‐STEP VELOCITY
+        for mol in self.molecules:
+            fx, fy, fz = mol.get_force()  # F_i(t)
+            m = mol.get_mass()
+            # current velocity
+            vx, vy, vz = mol.get_velocity()
+
+            # v(t+dt/2) = v(t) + 0.5 * dt * (F(t)/m)
+            vx += 0.5 * dt * (fx / m)
+            vy += 0.5 * dt * (fy / m)
+            vz += 0.5 * dt * (fz / m)
+
+            mol.set_velocity(vx, vy, vz)
+
+        # 2) FULL‐STEP POSITION + PBC WRAP
+        for mol in self.molecules:
+            vx, vy, vz = mol.get_velocity()
+
+            # x(t+dt) = x(t) + v(t+dt/2)*dt
+            mol._x += vx * dt
+            mol._y += vy * dt
+            mol._z += vz * dt
+
+            # Wrap each coordinate into [0, L) using //
+            mol._x -= Lx * (mol._x // Lx)
+            mol._y -= Ly * (mol._y // Ly)
+            mol._z -= Lz * (mol._z // Lz)
+
+        # 3) RECOMPUTE FORCES at new positions -> now F(t+dt)
+        self.compute_forces_F()
+
+        # 4) COMPLETE VELOCITY STEP
+        for mol in self.molecules:
+            fx, fy, fz = mol.get_force()  # Now F_i(t+dt)
+            m = mol.get_mass()
+            vx, vy, vz = mol.get_velocity()
+
+            # v(t+dt) = v(t+dt/2) + 0.5 * dt * (F(t+dt)/m)
+            vx += 0.5 * dt * (fx / m)
+            vy += 0.5 * dt * (fy / m)
+            vz += 0.5 * dt * (fz / m)
+
+            mol.set_velocity(vx, vy, vz)
 
 
 class Liquid(Box):

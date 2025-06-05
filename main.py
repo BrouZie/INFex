@@ -33,6 +33,16 @@ def main():
     box.molecules = all_molecules_list
     print(f"The LJTS potential is: {box.compute_potential_u()}")
 
+    for mol in box.molecules:
+        mol.set_velocity(0.0, 0.0, 0.0)
+
+    box.compute_forces_F()
+
+    dt = 0.001
+    num_steps = 10000
+    for step in range(num_steps):
+        box.integrate(dt)
+
 
 """
 tester pot per molekyl:
