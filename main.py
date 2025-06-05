@@ -9,9 +9,7 @@ def main():
     in each different type of box
     """
     vap1 = Vapour(x_range=(0.0, 5.0), y_range=(0.0, 16.0), z_range=(0.0, 5.0))
-
     liquid = Liquid(x_range=(0.0, 5.0), y_range=(16.0, 24.0), z_range=(0.0, 5.0))
-
     vap2 = Vapour(x_range=(0.0, 5.0), y_range=(24.0, 40.0), z_range=(0.0, 5.0))
 
     vap1.populate()
