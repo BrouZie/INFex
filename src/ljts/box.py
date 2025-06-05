@@ -6,15 +6,6 @@ from .molecule import Molecule
 
 
 class Box:
-    """
-    O The init have a min and max range that gets defined and we also make a list that is gonna be given molecules.
-    O We messure the distance in all directions x, y, and z and find the volum of it (Both for the "Liquid" and the "Vapour").
-    O We find a random posistion in the range betwenn max and min value in every directions.
-    O "get_num_molecules" finds the product of the desinty and the volume and messure how many molecules
-      that are inside the volume chosen.
-    O populate makes a (object/all methods in Molecule) and adds them to the list "molecules".
-    """
-
     def __init__(
         self, x_range: tuple, y_range: tuple, z_range: tuple, density: float
     ) -> None:
@@ -51,12 +42,6 @@ class Box:
             M = Molecule(x, y, z, DEFAULT_MASS)
             self.molecules.append(M)
 
-    """
-        O _get_minimum_distance finds the shortest distance following the rules of PBC diractions.
-        O greater_than is given the minimal discance from the function above it. If the min_distance is more than 2.5,
-          we return 0.0 Otherwise, we use th LJTS method, to compute the potential energy(U) between the molecules
-    """
-
     def _get_minimum_distance(self, pos_i: list, pos_j: list):
         dx = pos_j[0] - pos_i[0]
         dy = pos_j[1] - pos_i[1]
@@ -76,12 +61,6 @@ class Box:
         u_LJ = 4 * (r ** (-12) - r ** (-6))
         u_LJ_rcap = 4 * (u_rcap ** (-12) - u_rcap ** (-6))
         return u_LJ - u_LJ_rcap
-
-    """
-        For each iteration we compare every molecule with each other 1 time.
-        Then we hop on to the next molecule in line, and exclude the first already compred molecule
-        from being compared to the rest.
-    """
 
     # Changed postNrg to total_nrg, added the energy to each molecule object
     def compute_potential_u(self):
