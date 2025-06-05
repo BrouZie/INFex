@@ -159,9 +159,9 @@ class Box:
             mol._z += vz * dt
 
             # Wrap each coordinate into [0, L) using //
-            mol._x -= Lx * (mol._x // Lx)
-            mol._y -= Ly * (mol._y // Ly)
-            mol._z -= Lz * (mol._z // Lz)
+            mol._x %= Lx
+            mol._y %= Ly
+            mol._z %= Lz
 
         # 3) RECOMPUTE FORCES at new positions -> now F(t+dt)
         self.compute_forces_F()

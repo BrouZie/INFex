@@ -39,20 +39,10 @@ def main():
     box.compute_forces_F()
 
     dt = 0.001
-    num_steps = 10000
+    num_steps = 1000
     for step in range(num_steps):
         box.integrate(dt)
 
-
-"""
-tester pot per molekyl:
-
-    # each_mol_count = 0
-    # for molecule in box.molecules:
-        # each_mol_count += molecule._U
-
-    # print(each_mol_count)
-"""
 
 if __name__ == "__main__":
     main()
