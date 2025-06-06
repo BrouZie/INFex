@@ -2,6 +2,9 @@
 
 TODO:
 
-- constants --> config.toml
-- potensiell energi
+Monte Carlo method
+Velocity-verlet method
+Getters og setters for Molecule
+Interface?
+
 - vpython

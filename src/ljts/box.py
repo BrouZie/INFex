@@ -38,7 +38,7 @@ class Box:
     def populate(self):
         num_m = self.get_num_molecules()
         for i in range(num_m):
-            x, y, z = self._rand_position()
+            (x, y, z) = self._rand_position()
             M = Molecule(x, y, z, DEFAULT_MASS)
             self.molecules.append(M)
 
@@ -79,15 +79,18 @@ class Box:
                 pair_nrg = self._returns_potential(distance)
                 total_nrg += pair_nrg
 
-                half_nrg = pair_nrg * 0.5
-                self.molecules[i].increment_U(half_nrg)
-                self.molecules[j].increment_U(half_nrg)
+                # half_nrg = pair_nrg * 0.5
+                # self.molecules[i].increment_U(half_nrg)
+                # self.molecules[j].increment_U(half_nrg)
 
         return total_nrg
 
     """
+    
+    Velocity-verlet step method:
     This uses f_mag = - derivative of pair_nrg
     fx = f_mag * image_dx * 1/pair_nrg 
+
 
     """
 
@@ -111,7 +114,7 @@ class Box:
                 r = (dx**2 + dy**2 + dz**2) ** 0.5
 
                 u_rcap = 2.5
-                if r >= u_rcap:
+                if r >= u_rcap or r < 1e-12:
                     continue
 
                 duLJ_dr = 24.0 * r ** (-7) - 48.0 * r ** (-13)

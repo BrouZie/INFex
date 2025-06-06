@@ -38,11 +38,6 @@ def main():
 
     box.compute_forces_F()
 
-    dt = 0.001
-    num_steps = 1000
-    for step in range(num_steps):
-        box.integrate(dt)
-
 
 if __name__ == "__main__":
     main()
